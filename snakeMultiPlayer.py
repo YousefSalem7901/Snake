@@ -234,7 +234,7 @@ def exit_dead():
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    os.system("python3 snake2.py")
+                    os.system("python3 snakeMultiPlayer.py")
                     pygame.quit()
                     sys.exit()
 
