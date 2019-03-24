@@ -1,3 +1,4 @@
+import os
 import sys
 import pygame
 import time
@@ -14,11 +15,13 @@ WALL	= []
 BUG     = ()
 pygame.init()
 
-font = pygame.font.Font(None, 200)
+centerFont = pygame.font.Font(None, 200)
+bottomFont = pygame.font.Font(None, 100)
 
 SCREEN = pygame.display.set_mode(RES)
-text = font.render("Game Over", True, (255, 0, 0))
-text_rect = text.get_rect()
+gameOver = centerFont.render("Game Over", True, (255, 0, 0))
+restart = bottomFont.render("Press SPACE to play again!", True, (255, 0, 0))
+text_rect = gameOver.get_rect()
 text_x = SCREEN.get_width() / 2 - text_rect.width / 2
 text_y = SCREEN.get_height() / 2 - text_rect.height / 2
 pygame.display.set_caption("Snake by Yousef")
@@ -129,15 +132,24 @@ def event_loop():
         SNAKE.move()
 
 def exit_dead():
-    """exit_dead funtion
-    """   
-    pygame.display.update(SCREEN.blit(text, [text_x, text_y]))
+    """exit_dead function
+    """
+
+    pygame.display.update(SCREEN.blit(gameOver, [text_x, text_y]))
+    pygame.display.update(SCREEN.blit(restart, [text_x - 60, text_y + 200]))
     print("Difficulty:\t%d" % DIFFICULTY)
     print("Bugs eaten:\t%d" % (len(SNAKE.elements) - START_LENGTH + 1))
     print("Score:\t\t%d" % ((len(SNAKE.elements) - START_LENGTH + 1) * DIFFICULTY))
-    pygame.quit()
-    time.sleep(1)
-    sys.exit()
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    os.system("python3 snake.py")
+                    pygame.quit()
+                    sys.exit()
 
 if __name__ == "__main__":
     draw_map()
