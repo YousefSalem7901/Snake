@@ -63,11 +63,9 @@ class Mob():
     def check_dead(self):
         """check_dead function
         """
-        if [self.headx, self.heady] in self.elements[1:]:
-            print('self')
+        if [self.headx, self.heady] in self.elements[5:]:
             exit_dead()
         if [self.headx, self.heady] in WALL:
-            print('wall')
             exit_dead()
 
     def check_bug(self):
@@ -101,7 +99,7 @@ def create_bug():
         BUG = (random.randrange(40, RES[0] - 40 , 20),
             (random.randrange(40, RES[1] - 40 , 20)))
 
-    pygame.draw.circle(SCREEN, (255, 0, 0), BUG, RADIUS)
+    pygame.draw.circle(SCREEN, (165,80,42), BUG, RADIUS)
     pygame.display.flip()
 
 def event_loop():

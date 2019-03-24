@@ -1,3 +1,4 @@
+import os
 import sys
 import pygame
 import time
@@ -16,10 +17,14 @@ WALL	= []
 BUG     = ()
 pygame.init()
 
+centerFont = pygame.font.Font(None, 200)
+bottomFont = pygame.font.Font(None, 100)
+
+
 SCREEN = pygame.display.set_mode(RES)
-font = pygame.font.Font(None, 200)
-text = font.render("Game Over", True, (255, 0, 0)) 
-text_rect = text.get_rect()
+gameOver = centerFont.render("Game Over", True, (255, 0, 0))
+restart = bottomFont.render("Press SPACE to play again!", True, (255, 0, 0))
+text_rect = gameOver.get_rect()
 text_x = SCREEN.get_width() / 2 - text_rect.width / 2
 text_y = SCREEN.get_height() / 2 - text_rect.height / 2
 
@@ -30,8 +35,8 @@ class Mob():
     """class for moving objects
     """
     def __init__(self):
-        self.headx = 700
-        self.heady = 500
+        self.headx = 1000
+        self.heady = 600
         self.length = START_LENGTH
         self.elements = [[self.headx, self.heady]]
 
@@ -54,7 +59,7 @@ class Mob():
         self.check_dead()
         for element in self.elements[1:]:
             pygame.draw.circle(SCREEN, (255, 255, 0), (element[0], element[1]),
-                RADIUS) 
+                RADIUS)
         pygame.draw.circle(SCREEN, (255, 100, 0), (self.headx, self.heady),
             RADIUS)
         pygame.display.flip()
@@ -63,9 +68,9 @@ class Mob():
     def check_dead(self):
         """check_dead function
         """
-        if [self.headx, self.heady] in self.elements[1:]:
+        if [self.headx, self.heady] in self.elements[5:]:
             exit_dead()
-            
+
         if [self.headx, self.heady] in WALL:
             exit_dead()
 
@@ -104,7 +109,7 @@ class Mob2():
         self.check_dead()
         for element in self.elements2[1:]:
             pygame.draw.circle(SCREEN, (255, 255, 0), (element[0], element[1]),
-                RADIUS) 
+                RADIUS)
         pygame.draw.circle(SCREEN, (0, 255, 0), (self.headx, self.heady),
             RADIUS)
         pygame.display.flip()
@@ -113,12 +118,12 @@ class Mob2():
     def check_dead(self):
         """check_dead function
         """
-        if [self.headx, self.heady] in self.elements2[1:]:
+        if [self.headx, self.heady] in self.elements2[5:]:
             exit_dead()
-            
+
         if [self.headx, self.heady] in WALL:
             exit_dead()
-          
+
     def check_bug(self):
         """check_bug function
         """
@@ -137,7 +142,7 @@ def draw_map():
     for n in range(20, RES[1], 20):
         pygame.draw.circle(SCREEN, (0, 0, 255),(20, n), 10)
         WALL.append([20, n])
-        pygame.draw.circle(SCREEN, (0, 0, 255), (RES[0] - 20, n), 10) 
+        pygame.draw.circle(SCREEN, (0, 0, 255), (RES[0] - 20, n), 10)
         WALL.append([RES[0] - 20 , n])
     pygame.display.flip()
 
@@ -151,14 +156,13 @@ def create_bug():
         BUG = (random.randrange(40, RES[0] - 40 , 20),
             (random.randrange(40, RES[1] - 40 , 20)))
 
-    pygame.draw.circle(SCREEN, (255, 0, 0), BUG, RADIUS)
+    pygame.draw.circle(SCREEN, (165,80,42), BUG, RADIUS)
     pygame.display.flip()
 
 def event_loop():
     """main event loop
     """
     while True:
-        time.sleep(WAIT)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -200,9 +204,11 @@ def event_loop():
 
 
 def exit_dead():
-    """exit_dead funtion
+    """exit_dead function
     """
-    pygame.display.update(SCREEN.blit(text, [text_x, text_y]))
+
+    pygame.display.update(SCREEN.blit(gameOver, [text_x, text_y]))
+    pygame.display.update(SCREEN.blit(restart, [text_x - 60, text_y + 200]))
     print("Difficulty:\t%d" % DIFFICULTY)
     print("")
     print("PLAYER 1:")
@@ -220,9 +226,16 @@ def exit_dead():
     else:
         print("It's a tie, try again")
 
-    pygame.quit()
-    time.sleep(1)
-    sys.exit()
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    os.system("python3 snake2.py")
+                    pygame.quit()
+                    sys.exit()
 
 if __name__ == "__main__":
     draw_map()
