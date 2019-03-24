@@ -12,13 +12,13 @@ DIFFICULTY = 10
 START_LENGTH = 4
 WAIT	= 0.1 / DIFFICULTY
 RADIUS	= 10
-RES	= [1100, 700]
+RES	= [900, 600]
 WALL	= []
 BUG     = ()
 pygame.init()
 
 centerFont = pygame.font.Font(None, 200)
-bottomFont = pygame.font.Font(None, 100)
+bottomFont = pygame.font.Font(None, 60)
 
 
 SCREEN = pygame.display.set_mode(RES)
@@ -35,8 +35,8 @@ class Mob():
     """class for moving objects
     """
     def __init__(self):
-        self.headx = 1000
-        self.heady = 600
+        self.headx = 700
+        self.heady = 500
         self.length = START_LENGTH
         self.elements = [[self.headx, self.heady]]
 
@@ -163,6 +163,7 @@ def event_loop():
     """main event loop
     """
     while True:
+        time.sleep(WAIT)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -208,7 +209,7 @@ def exit_dead():
     """
 
     pygame.display.update(SCREEN.blit(gameOver, [text_x, text_y]))
-    pygame.display.update(SCREEN.blit(restart, [text_x - 60, text_y + 200]))
+    pygame.display.update(SCREEN.blit(restart, [text_x + 120, text_y + 200]))
     print("Difficulty:\t%d" % DIFFICULTY)
     print("")
     print("PLAYER 1:")
