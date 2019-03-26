@@ -7,7 +7,7 @@ import random
 # 1 ... 10
 #Game Settings
 DIFFICULTY = 10
-START_LENGTH = 4
+START_LENGTH = 12
 RES = [1100, 700]
 WAIT	= 0.1 / DIFFICULTY
 
@@ -16,6 +16,8 @@ RADIUS	= 10
 WALL	= []
 BUG     = ()
 pygame.init()
+score = 0
+corner = pygame.font.Font(None, 50)
 
 #Screen Set up
 SCREEN = pygame.display.set_mode(RES)
@@ -30,6 +32,7 @@ class Mob():
         self.heady = 100
         self.length = START_LENGTH
         self.elements = [[self.headx, self.heady]]
+        self.score = score
 
         #Builds Snake untill starting length is reaches
         while len(self.elements) != (self.length - 1):
@@ -70,7 +73,7 @@ class Mob():
         """check_dead function
         """
         #Exits game if snake hits its self
-        if [self.headx, self.heady] in self.elements[5:]:
+        if [self.headx, self.heady] in self.elements[8:]:
             exit_dead()
         #Exits game if snake hits the wall
         if [self.headx, self.heady] in WALL:
@@ -84,21 +87,26 @@ class Mob():
             self.elements.append(self.elements[-1])
             #Calls for new bug as soon as previous one is consumed
             create_bug()
+            pygame.display.flip()
+            self.score += 1
+            SCREEN.blit(corner.render("Score: " + str(self.score), True, (0, 255, 0)), [20, 0])
 
 def draw_map():
     """draw_map function
     """
     #Draws the map borders on the edge of the screen with adjustable settings
     for n in range(20, RES[0], 20):
-        pygame.draw.circle(SCREEN, (0, 0, 255), (n, 20), 10)
-        WALL.append([n, 20])
+        pygame.draw.circle(SCREEN, (0, 0, 255), (n, 40), 10)
+        WALL.append([n, 40])
         pygame.draw.circle(SCREEN,(0, 0, 255),(n, RES[1] - 20), 10)
         WALL.append([n, RES[1] - 20])
-    for n in range(20, RES[1], 20):
+    for n in range(40, RES[1], 20):
         pygame.draw.circle(SCREEN, (0, 0, 255),(20, n), 10)
         WALL.append([20, n])
         pygame.draw.circle(SCREEN, (0, 0, 255), (RES[0] - 20, n), 10) 
         WALL.append([RES[0] - 20 , n])
+    board = corner.render("Score: " + str(score), True, (0, 255, 0))
+    SCREEN.blit(board, [20, 0])
     pygame.display.flip()
 
 def create_bug():
@@ -108,8 +116,8 @@ def create_bug():
     BUG = ()
     #Checks that the bug is not randomly generated on to the wall or snakes body and then displays it
     while ( list(BUG) in WALL ) or ( list(BUG) in SNAKE.elements) or (not BUG):
-        BUG = (random.randrange(40, RES[0] - 40 , 20),
-            (random.randrange(40, RES[1] - 40 , 20)))
+        BUG = (random.randrange(40, RES[0] - 40, 20),
+            (random.randrange(40, RES[1] - 40, 20)))
 
     # Generates the bug
     pygame.draw.circle(SCREEN, (165,80,42), BUG, RADIUS)
@@ -150,14 +158,14 @@ def exit_dead():
 
     #Text Display
     centerFont = pygame.font.Font(None, 200)
-    bottomFont = pygame.font.Font(None, 100)
+    bottomFont = pygame.font.Font(None, 50)
     gameOver = centerFont.render("Game Over", True, (255, 0, 0))
-    restart = bottomFont.render("Press SPACE to play again!", True, (255, 0, 0))
+    restart = bottomFont.render("Press SPACE to play again!", True, (0, 255, 0))
     text_rect = gameOver.get_rect()
     text_x = SCREEN.get_width() / 2 - text_rect.width / 2
     text_y = SCREEN.get_height() / 2 - text_rect.height / 2
     pygame.display.update(SCREEN.blit(gameOver, [text_x, text_y]))
-    pygame.display.update(SCREEN.blit(restart, [text_x - 60, text_y + 200]))
+    pygame.display.update(SCREEN.blit(restart, [text_x + 150, text_y + 200]))
 
     #Command line score display
     print("")
