@@ -89,6 +89,7 @@ class Mob():
             create_bug()
             pygame.display.flip()
             self.score += 1
+            pygame.draw.rect(SCREEN, (0, 0, 0), [0, 0, 200, 30])
             SCREEN.blit(corner.render("Score: " + str(self.score), True, (0, 255, 0)), [20, 0])
 
 def draw_map():
