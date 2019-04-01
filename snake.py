@@ -8,7 +8,7 @@ import random
 #Game Settings
 DIFFICULTY = 10
 START_LENGTH = 12
-RES = [1100, 700]
+RES = [1000, 700]
 WAIT	= 0.1 / DIFFICULTY
 
 #Initial Values
@@ -86,11 +86,11 @@ class Mob():
         if (self.headx, self.heady) == BUG:
             self.elements.append(self.elements[-1])
             #Calls for new bug as soon as previous one is consumed
-            create_bug()
-            pygame.display.flip()
             self.score += 1
             pygame.draw.rect(SCREEN, (0, 0, 0), [0, 0, 200, 30])
             SCREEN.blit(corner.render("Score: " + str(self.score), True, (0, 255, 0)), [20, 0])
+            create_bug()
+
 
 def draw_map():
     """draw_map function
