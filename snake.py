@@ -12,6 +12,13 @@ RES = [1000, 700]
 WAIT	= 0.1 / DIFFICULTY
 
 #Initial Values
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+BLUE = (0, 0, 255)
+GREEN = (0, 255, 0)
+YELLOW = (255, 255, 0)
+BRWON = (165,80,42)
+
 RADIUS	= 10
 WALL	= []
 BUG     = ()
@@ -32,7 +39,6 @@ class Mob():
         self.heady = 100
         self.length = START_LENGTH
         self.elements = [[self.headx, self.heady]]
-        self.score = score
 
         #Builds Snake untill starting length is reaches
         while len(self.elements) != (self.length - 1):
@@ -42,14 +48,14 @@ class Mob():
         self.speed = [RADIUS * 2, 0]
 
         #Draws green head of snake
-        pygame.draw.circle(SCREEN, (0, 255, 0), (self.headx, self.heady),
+        pygame.draw.circle(SCREEN, YELLOW, (self.headx, self.heady),
             RADIUS)
         pygame.display.flip()
 
     def move(self):
         """move function
         """
-        pygame.draw.circle(SCREEN, (0, 0, 0), (self.elements[-1][0],
+        pygame.draw.circle(SCREEN, BLACK, (self.elements[-1][0],
             self.elements[-1][1]), RADIUS)
         self.elements.pop()
 
@@ -61,9 +67,9 @@ class Mob():
 
         #Draws as many body parts as their are indexes in the list
         for element in self.elements[1:]:
-            pygame.draw.circle(SCREEN, (255, 255, 0), (element[0], element[1]),
+            pygame.draw.circle(SCREEN, YELLOW, (element[0], element[1]),
                 RADIUS) 
-        pygame.draw.circle(SCREEN, (0, 255, 0), (self.headx, self.heady),
+        pygame.draw.circle(SCREEN, GREEN, (self.headx, self.heady),
             RADIUS)
         pygame.display.flip()
         #checks if the snake has eaten a bug after every movement
@@ -79,16 +85,30 @@ class Mob():
         if [self.headx, self.heady] in WALL:
             exit_dead()
 
+        if self.headx > RES[0]:
+            self.headx -= RES[0]
+            SNAKE.move()
+        if self.headx < 0:
+            self.headx += RES[0]
+            SNAKE.move()
+        if self.heady > RES[1]:
+            self.heady -= RES[1]
+            SNAKE.move()
+        if self.heady < 0:
+            self.heady += RES[1]
+            SNAKE.move()
+
     def check_bug(self):
         """check_bug function
         """
         # checks if the snake has eaten a bug after every movement by comparing the x and y cordinants
+        global score
         if (self.headx, self.heady) == BUG:
             self.elements.append(self.elements[-1])
             #Calls for new bug as soon as previous one is consumed
-            self.score += 1
-            pygame.draw.rect(SCREEN, (0, 0, 0), [0, 0, 200, 30])
-            SCREEN.blit(corner.render("Score: " + str(self.score), True, (0, 255, 0)), [20, 0])
+            score += 1
+            pygame.draw.rect(SCREEN, BLACK, [0, 0, 200, 30])
+            SCREEN.blit(corner.render("Score: " + str(score), True, GREEN), [20, 0])
             create_bug()
 
 
@@ -96,17 +116,17 @@ def draw_map():
     """draw_map function
     """
     #Draws the map borders on the edge of the screen with adjustable settings
-    for n in range(20, RES[0], 20):
-        pygame.draw.circle(SCREEN, (0, 0, 255), (n, 40), 10)
+    '''for n in range(20, RES[0], 20):
+        pygame.draw.circle(SCREEN, BLUE, (n, 40), 10)
         WALL.append([n, 40])
-        pygame.draw.circle(SCREEN,(0, 0, 255),(n, RES[1] - 20), 10)
+        pygame.draw.circle(SCREEN,BLUE,(n, RES[1] - 20), 10)
         WALL.append([n, RES[1] - 20])
     for n in range(40, RES[1], 20):
-        pygame.draw.circle(SCREEN, (0, 0, 255),(20, n), 10)
+        pygame.draw.circle(SCREEN, BLUE,(20, n), 10)
         WALL.append([20, n])
-        pygame.draw.circle(SCREEN, (0, 0, 255), (RES[0] - 20, n), 10) 
-        WALL.append([RES[0] - 20 , n])
-    board = corner.render("Score: " + str(score), True, (0, 255, 0))
+        pygame.draw.circle(SCREEN, BLUE, (RES[0] - 20, n), 10)
+        WALL.append([RES[0] - 20 , n])'''
+    board = corner.render("Score: " + str(score), True, GREEN)
     SCREEN.blit(board, [20, 0])
     pygame.display.flip()
 
@@ -152,6 +172,8 @@ def event_loop():
                     pygame.quit()
                     sys.exit()
         SNAKE.move()
+        pygame.draw.rect(SCREEN, BLACK, [0, 0, 200, 30])
+        SCREEN.blit(corner.render("Score: " + str(score), True, GREEN), [20, 0])
 
 def exit_dead():
     """exit_dead function
@@ -160,8 +182,8 @@ def exit_dead():
     #Text Display
     centerFont = pygame.font.Font(None, 200)
     bottomFont = pygame.font.Font(None, 50)
-    gameOver = centerFont.render("Game Over", True, (255, 0, 0))
-    restart = bottomFont.render("Press SPACE to play again!", True, (0, 255, 0))
+    gameOver = centerFont.render("Game Over", True, RED)
+    restart = bottomFont.render("Press SPACE to play again!", True, GREEN)
     text_rect = gameOver.get_rect()
     text_x = SCREEN.get_width() / 2 - text_rect.width / 2
     text_y = SCREEN.get_height() / 2 - text_rect.height / 2
