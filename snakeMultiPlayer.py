@@ -13,6 +13,16 @@ START_LENGTH = 6
 WAIT	= 0.1 / DIFFICULTY
 RADIUS	= 10
 RES	= [900, 600]
+
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+BLUE = (0, 0, 255)
+GREEN = (0, 255, 0)
+YELLOW = (255, 255, 0)
+BROWN = (165,80,42)
+ORANGE = (255, 100, 0)
+
+
 WALL	= []
 BUG     = ()
 pygame.init()
@@ -31,19 +41,18 @@ class Mob():
         self.heady = RES[1]-100
         self.length = START_LENGTH
         self.elements = [[self.headx, self.heady]]
-        self.score = score1
 
         while len(self.elements) != (self.length - 1):
             self.elements.append([self.headx, self.heady])
         self.speed = [-2 * RADIUS, 0]
-        pygame.draw.circle(SCREEN, (0, 255, 0), (self.headx, self.heady),
+        pygame.draw.circle(SCREEN, YELLOW, (self.headx, self.heady),
             RADIUS)
         pygame.display.flip()
 
     def move(self):
         """move function
         """
-        pygame.draw.circle(SCREEN, (0, 0, 0), (self.elements[-1][0],
+        pygame.draw.circle(SCREEN, BLACK, (self.elements[-1][0],
             self.elements[-1][1]), RADIUS)
         self.elements.pop()
         self.headx += self.speed[0]
@@ -51,9 +60,9 @@ class Mob():
         self.elements = [[self.headx, self.heady]] + self.elements[0:]
         self.check_dead()
         for element in self.elements[1:]:
-            pygame.draw.circle(SCREEN, (255, 255, 0), (element[0], element[1]),
+            pygame.draw.circle(SCREEN, GREEN, (element[0], element[1]),
                 RADIUS)
-        pygame.draw.circle(SCREEN, (0, 255, 0), (self.headx, self.heady),
+        pygame.draw.circle(SCREEN, YELLOW, (self.headx, self.heady),
             RADIUS)
         pygame.display.flip()
         self.check_bug()
@@ -67,15 +76,29 @@ class Mob():
         if [self.headx, self.heady] in WALL:
             exit_dead()
 
+        if self.headx > RES[0]:
+            self.headx -= RES[0]
+            SNAKE.move()
+        if self.headx < 0:
+            self.headx += RES[0]
+            SNAKE.move()
+        if self.heady > RES[1]:
+            self.heady -= RES[1]
+            SNAKE.move()
+        if self.heady < 0:
+            self.heady += RES[1]
+            SNAKE.move()
+
     def check_bug(self):
         """check_bug function
         """
+        global score1
         if (self.headx, self.heady) == BUG:
             self.elements.append(self.elements[-1])
             # Calls for new bug as soon as previous one is consumed
-            self.score += 1
-            pygame.draw.rect(SCREEN, (0, 0, 0), [0, 0, 200, 30])
-            SCREEN.blit(corner.render("Score: " + str(self.score), True, (0, 255, 0)), [10, 0])
+            score1 += 1
+            pygame.draw.rect(SCREEN, BLACK, [0, 0, 200, 30])
+            SCREEN.blit(corner.render("Score: " + str(score1), True, GREEN), [10, 0])
             create_bug()
 
 class Mob2():
@@ -86,19 +109,18 @@ class Mob2():
         self.heady = 100
         self.length = START_LENGTH
         self.elements2 = [[self.headx, self.heady]]
-        self.score = score2
 
         while len(self.elements2) != (self.length - 1):
             self.elements2.append([self.headx, self.heady])
         self.speed = [RADIUS * 2, 0]
-        pygame.draw.circle(SCREEN, (255, 100, 0), (self.headx, self.heady),
+        pygame.draw.circle(SCREEN, BLACK, (self.headx, self.heady),
             RADIUS)
         pygame.display.flip()
 
     def move(self):
         """move function
         """
-        pygame.draw.circle(SCREEN, (0, 0, 0), (self.elements2[-1][0],
+        pygame.draw.circle(SCREEN, BLACK, (self.elements2[-1][0],
             self.elements2[-1][1]), RADIUS)
         self.elements2.pop()
         self.headx += self.speed[0]
@@ -106,9 +128,9 @@ class Mob2():
         self.elements2 = [[self.headx, self.heady]] + self.elements2[0:]
         self.check_dead()
         for element in self.elements2[1:]:
-            pygame.draw.circle(SCREEN, (255, 255, 0), (element[0], element[1]),
+            pygame.draw.circle(SCREEN, ORANGE, (element[0], element[1]),
                 RADIUS)
-        pygame.draw.circle(SCREEN, (255, 100, 0), (self.headx, self.heady),
+        pygame.draw.circle(SCREEN, YELLOW, (self.headx, self.heady),
             RADIUS)
         pygame.display.flip()
         self.check_bug()
@@ -122,22 +144,36 @@ class Mob2():
         if [self.headx, self.heady] in WALL:
             exit_dead()
 
+        if self.headx > RES[0]:
+            self.headx -= RES[0]
+            SNAKE2.move()
+        if self.headx < 0:
+            self.headx += RES[0]
+            SNAKE2.move()
+        if self.heady > RES[1]:
+            self.heady -= RES[1]
+            SNAKE2.move()
+        if self.heady < 0:
+            self.heady += RES[1]
+            SNAKE2.move()
+
     def check_bug(self):
         """check_bug function
         """
+        global score2
         if (self.headx, self.heady) == BUG:
             self.elements2.append(self.elements2[-1])
             # Calls for new bug as soon as previous one is consumed
-            self.score += 1
-            pygame.draw.rect(SCREEN, (0, 0, 0), [RES[0]-145, 0, 200, 30])
-            SCREEN.blit(corner.render("Score: " + str(self.score), True, (255, 100, 0)), [RES[0]-145, 0])
+            score2 += 1
+            pygame.draw.rect(SCREEN, BLACK, [RES[0]-145, 0, 200, 30])
+            SCREEN.blit(corner.render("Score: " + str(score2), True, ORANGE), [RES[0]-145, 0])
             create_bug()
 
 def draw_map():
     """draw_map function
     """
     #Draws the map borders on the edge of the screen with adjustable settings
-    for n in range(20, RES[0], 20):
+    '''for n in range(20, RES[0], 20):
         pygame.draw.circle(SCREEN, (0, 0, 255), (n, 40), 10)
         WALL.append([n, 40])
         pygame.draw.circle(SCREEN,(0, 0, 255),(n, RES[1] - 20), 10)
@@ -146,9 +182,9 @@ def draw_map():
         pygame.draw.circle(SCREEN, (0, 0, 255),(20, n), 10)
         WALL.append([20, n])
         pygame.draw.circle(SCREEN, (0, 0, 255), (RES[0] - 20, n), 10)
-        WALL.append([RES[0] - 20 , n])
-    board1 = corner.render("Score: " + str(score1), True, (0, 255, 0))
-    board2 = corner.render("Score: " + str(score1), True, (255, 100, 0))
+        WALL.append([RES[0] - 20 , n])'''
+    board1 = corner.render("Score: " + str(score1), True, GREEN)
+    board2 = corner.render("Score: " + str(score1), True, ORANGE)
     SCREEN.blit(board1, [10, 0])
     SCREEN.blit(board2, [RES[0]-145, 0])
     pygame.display.flip()
@@ -207,7 +243,11 @@ def event_loop():
                     pygame.quit()
                     sys.exit()
         SNAKE.move()
+        pygame.draw.rect(SCREEN, BLACK, [0, 0, 200, 30])
+        SCREEN.blit(corner.render("Score: " + str(score1), True, GREEN), [10, 0])
         SNAKE2.move()
+        pygame.draw.rect(SCREEN, BLACK, [RES[0] - 145, 0, 200, 30])
+        SCREEN.blit(corner.render("Score: " + str(score2), True, ORANGE), [RES[0] - 145, 0])
 
 
 def exit_dead():
@@ -217,7 +257,7 @@ def exit_dead():
     bottomFont = pygame.font.Font(None, 60)
 
     gameOver = centerFont.render("Game Over", True, (255, 0, 0))
-    restart = bottomFont.render("Press SPACE to play again!", True, (0, 255, 0))
+    restart = bottomFont.render("Press SPACE to play again!", True, GREEN)
     text_rect = gameOver.get_rect()
     text_x = SCREEN.get_width() / 2 - text_rect.width / 2
     text_y = SCREEN.get_height() / 2 - text_rect.height / 2
