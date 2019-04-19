@@ -1,4 +1,3 @@
-import os
 import sys
 import pygame
 import time
@@ -9,7 +8,7 @@ import random
 
 DIFFICULTY = 10
 
-START_LENGTH = 6
+START_LENGTH = 9
 WAIT	= 0.1 / DIFFICULTY
 RADIUS	= 10
 RES	= [900, 600]
@@ -70,10 +69,13 @@ class Mob():
     def check_dead(self):
         """check_dead function
         """
+        global score1
         if [self.headx, self.heady] in self.elements[5:]:
+            score1 = 0
             exit_dead()
 
         if [self.headx, self.heady] in WALL:
+            score1 = 0
             exit_dead()
 
         if self.headx > RES[0]:
@@ -97,7 +99,6 @@ class Mob():
             self.elements.append(self.elements[-1])
             # Calls for new bug as soon as previous one is consumed
             score1 += 1
-            pygame.draw.rect(SCREEN, BLACK, [0, 0, 200, 30])
             SCREEN.blit(corner.render("Score: " + str(score1), True, GREEN), [10, 0])
             create_bug()
 
@@ -138,10 +139,13 @@ class Mob2():
     def check_dead(self):
         """check_dead function
         """
+        global score2
         if [self.headx, self.heady] in self.elements2[5:]:
+            score2 = 0
             exit_dead()
 
         if [self.headx, self.heady] in WALL:
+            score2 = 0
             exit_dead()
 
         if self.headx > RES[0]:
@@ -165,13 +169,13 @@ class Mob2():
             self.elements2.append(self.elements2[-1])
             # Calls for new bug as soon as previous one is consumed
             score2 += 1
-            pygame.draw.rect(SCREEN, BLACK, [RES[0]-145, 0, 200, 30])
-            SCREEN.blit(corner.render("Score: " + str(score2), True, ORANGE), [RES[0]-145, 0])
+            SCREEN.blit(corner.render("Score: " + str(score2), True, ORANGE), [RES[0]-165, 0])
             create_bug()
 
 def draw_map():
     """draw_map function
     """
+    pygame.draw.rect(SCREEN, BLACK, [0, 0, RES[0], RES[1]])
     #Draws the map borders on the edge of the screen with adjustable settings
     '''for n in range(20, RES[0], 20):
         pygame.draw.circle(SCREEN, (0, 0, 255), (n, 40), 10)
@@ -186,7 +190,7 @@ def draw_map():
     board1 = corner.render("Score: " + str(score1), True, GREEN)
     board2 = corner.render("Score: " + str(score1), True, ORANGE)
     SCREEN.blit(board1, [10, 0])
-    SCREEN.blit(board2, [RES[0]-145, 0])
+    SCREEN.blit(board2, [RES[0]-165, 0])
     pygame.display.flip()
 
 
@@ -246,13 +250,15 @@ def event_loop():
         pygame.draw.rect(SCREEN, BLACK, [0, 0, 200, 30])
         SCREEN.blit(corner.render("Score: " + str(score1), True, GREEN), [10, 0])
         SNAKE2.move()
-        pygame.draw.rect(SCREEN, BLACK, [RES[0] - 145, 0, 200, 30])
-        SCREEN.blit(corner.render("Score: " + str(score2), True, ORANGE), [RES[0] - 145, 0])
+        pygame.draw.rect(SCREEN, BLACK, [RES[0] - 165, 0, 200, 30])
+        SCREEN.blit(corner.render("Score: " + str(score2), True, ORANGE), [RES[0] - 165, 0])
 
 
 def exit_dead():
     """exit_dead function
     """
+    global SNAKE
+    global SNAKE2
     centerFont = pygame.font.Font(None, 200)
     bottomFont = pygame.font.Font(None, 60)
 
@@ -264,22 +270,6 @@ def exit_dead():
 
     pygame.display.update(SCREEN.blit(gameOver, [text_x, text_y]))
     pygame.display.update(SCREEN.blit(restart, [text_x + 120, text_y + 200]))
-    print("Difficulty:\t%d" % DIFFICULTY)
-    print("")
-    print("PLAYER 1:")
-    print("Bugs eaten:\t%d" % (len(SNAKE.elements) - START_LENGTH + 1))
-    print("Score:\t\t%d" % ((len(SNAKE.elements) - START_LENGTH + 1) * DIFFICULTY))
-    print("")
-    print("PLAYER 2:")
-    print("Bugs eaten:\t%d" % (len(SNAKE2.elements2) - START_LENGTH + 1))
-    print("Score:\t\t%d" % ((len(SNAKE2.elements2) - START_LENGTH + 1) * DIFFICULTY))
-    print("")
-    if (len(SNAKE.elements) - START_LENGTH + 1) > (len(SNAKE2.elements2) - START_LENGTH + 1):
-        print("PLAYER 1 WINS!!!")
-    elif (len(SNAKE.elements) - START_LENGTH + 1) < (len(SNAKE2.elements2) - START_LENGTH + 1):
-        print("PLAYER 2 WINS!!!")
-    else:
-        print("It's a tie, try again")
 
     while True:
         for event in pygame.event.get():
@@ -288,14 +278,15 @@ def exit_dead():
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    os.system("python3 snakeMultiPlayer.py")
-                    pygame.quit()
-                    sys.exit()
+                    SNAKE = Mob()
+                    SNAKE2 = Mob2()
+                    main()
 
-if __name__ == "__main__":
+SNAKE = Mob()
+SNAKE2 = Mob2()
+def main():
     draw_map()
-    SNAKE = Mob()
-    SNAKE2 = Mob2()
     create_bug()
     event_loop()
 
+main()

@@ -1,4 +1,3 @@
-import os
 import sys
 import pygame
 import time
@@ -8,7 +7,7 @@ import random
 #Game Settings
 DIFFICULTY = 10
 START_LENGTH = 12
-RES = [1000, 700]
+RES = [1200, 600]
 WAIT	= 0.1 / DIFFICULTY
 
 #Initial Values
@@ -78,11 +77,14 @@ class Mob():
     def check_dead(self):
         """check_dead function
         """
+        global score
         #Exits game if snake hits its self
         if [self.headx, self.heady] in self.elements[8:]:
+            score = 0
             exit_dead()
         #Exits game if snake hits the wall
         if [self.headx, self.heady] in WALL:
+            score = 0
             exit_dead()
 
         if self.headx > RES[0]:
@@ -107,7 +109,6 @@ class Mob():
             self.elements.append(self.elements[-1])
             #Calls for new bug as soon as previous one is consumed
             score += 1
-            pygame.draw.rect(SCREEN, BLACK, [0, 0, 200, 30])
             SCREEN.blit(corner.render("Score: " + str(score), True, GREEN), [20, 0])
             create_bug()
 
@@ -116,6 +117,7 @@ def draw_map():
     """draw_map function
     """
     #Draws the map borders on the edge of the screen with adjustable settings
+    pygame.draw.rect(SCREEN, BLACK, [0, 0, RES[0], RES[1]])
     '''for n in range(20, RES[0], 20):
         pygame.draw.circle(SCREEN, BLUE, (n, 40), 10)
         WALL.append([n, 40])
@@ -177,7 +179,7 @@ def event_loop():
 def exit_dead():
     """exit_dead function
     """
-
+    global SNAKE
     #Text Display
     centerFont = pygame.font.Font(None, 200)
     bottomFont = pygame.font.Font(None, 50)
@@ -206,13 +208,14 @@ def exit_dead():
                 sys.exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    os.system("python3 snake.py")
-                    pygame.quit()
-                    sys.exit()
+                    SNAKE = Mob()
+                    main()
 
 #Main calls
-if __name__ == "__main__":
+SNAKE = Mob()
+def main():
     draw_map()
-    SNAKE = Mob()
     create_bug()
     event_loop()
+
+main()
